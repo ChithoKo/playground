@@ -36,6 +36,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<TodoItem> tdItems = <TodoItem>[
+    TodoItem(title: 'hi there 2'),
+    TodoItem(title: 'hi again 2'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -82,74 +86,12 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 16.0),
-                child: ListView(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Checkbox(
-                          value: false,
-                          // onChanged: (bool newValue) {
-                          //   setState(() {
-                          //     _value = newValue;
-                          //   });
-                          // },
-                        ),
-                        Flexible(
-                          child: ExpansionTile(
-                            key: Key('123'),
-                            initiallyExpanded: true,
-                            title: Visibility (
-                              visible: false,
-                              child: Container(
-                                child: Text('New To-Do')
-                              ),
-                              replacement: TextField(
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  // border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(vertical: 6.0),
-                                  isDense: true,
-                                  hintText: 'New To-Do',
-                                ),
-                                controller: TextEditingController(text: 'Initial value')
-                              ),
-                            ),
-                            trailing: Image.asset(
-                              "assets/images/spacer.png",
-                              width: 10,
-                              height: 10,
-                            ),
-                            children: <Widget>[
-                              TextField(
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 6.0),
-                                  hintText: 'Notes'
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 24.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.grade,
-                                      size: 24.0,
-                                      color: Colors.yellow
-                                    ),
-                                    Text('Today', style: Theme.of(context).textTheme.bodyText2),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                )
+                child: new ListView.builder(
+                  itemCount: tdItems.length,
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    return new TodoTile(todoItem: tdItems[index]);
+                  }
+                ),
               )
             ),
           ],
@@ -170,6 +112,103 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         )
       )
+    );
+  }
+}
+
+class TodoItem {
+  TodoItem({this.isExpanded, this.title, this.subTitle, this.note});
+
+  final bool isExpanded;
+  final String title;
+  final String subTitle;
+  final String note;
+}
+
+class TodoTile extends StatefulWidget {
+  TodoTile({Key key, this.todoItem}) : super(key: key);
+
+  final TodoItem todoItem;
+  
+  @override
+  _TodoTileState createState() => _TodoTileState();
+}
+
+class _TodoTileState extends State<TodoTile> {
+  bool _exp = false;
+  bool _chkboxStatus = false;
+
+  Widget build (BuildContext context) {
+    return ExpansionTile(
+      key: Key('123'),
+      // initiallyExpanded: false,
+      title: Row(
+        children: <Widget>[
+          Checkbox(
+            value: _chkboxStatus,
+            onChanged: (bool newValue) {
+              setState(() {
+                _chkboxStatus = newValue;
+              });
+            },
+          ),
+          Flexible(
+            child: Visibility (
+              visible: !_exp,
+              child: Container(
+                child: Text(widget.todoItem.title ?? ''),
+              ),
+              replacement: TextField(
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  // border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(vertical: 6.0),
+                  isDense: true,
+                  hintText: 'New To-Do',
+                ),
+                controller: TextEditingController(text: widget.todoItem.title ?? '')
+              ),
+            )
+          )
+        ]
+      ),
+      trailing: Image.asset(
+        "assets/images/spacer.png",
+        width: 10,
+        height: 10,
+      ),
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 62.0),
+          child: TextField(
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 6.0),
+              hintText: 'Notes'
+            ),
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 24.0),
+          padding: EdgeInsets.symmetric(horizontal: 56.0),
+          child: Row(
+            children: <Widget>[
+              Icon(
+                Icons.grade,
+                size: 24.0,
+                color: Colors.yellow
+              ),
+              Text('Today', style: Theme.of(context).textTheme.bodyText2),
+            ],
+          ),
+        ),
+      ],
+      onExpansionChanged: (bool newValue) {
+        setState(() {
+          _exp = newValue;
+        });
+      }
     );
   }
 }
