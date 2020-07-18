@@ -22,6 +22,8 @@ environment:
 
 dependencies:
   font_awesome_flutter: '>= 4.7.0'
+  scoped_model: '1.0.1'
+
   flutter:
     sdk: flutter
 
